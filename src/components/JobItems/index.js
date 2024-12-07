@@ -1,5 +1,5 @@
-import {Link} from 'react-router-dom'
 import {Component} from 'react'
+import {Link} from 'react-router-dom'
 import Cookies from 'js-cookie'
 import Loader from 'react-loader-spinner'
 import {IoIosStar} from 'react-icons/io'
@@ -26,10 +26,51 @@ class JobItems extends Component {
     this.getJobsList()
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    const {
+      selectedEmploymentTypes,
+      selectedSalaryRange,
+      selectedLocations,
+    } = this.props
+    const {searchQuery} = this.state
+
+    if (
+      prevProps.selectedEmploymentTypes !== selectedEmploymentTypes ||
+      prevProps.selectedSalaryRange !== selectedSalaryRange ||
+      prevProps.selectedLocations !== selectedLocations ||
+      prevState.searchQuery !== searchQuery
+    ) {
+      this.getJobsList()
+    }
+  }
+
   getJobsList = async () => {
     this.setState({apiStatus: apiStatusConstants.inProgress})
     const jwtToken = Cookies.get('jwt_token')
-    const url = 'https://apis.ccbp.in/jobs'
+    const {
+      selectedEmploymentTypes,
+      selectedSalaryRange,
+      selectedLocations,
+    } = this.props
+    const {searchQuery} = this.state
+
+    // Build query parameters
+    const employmentTypeQuery = selectedEmploymentTypes.join(',') || ''
+    const locationQuery = selectedLocations.join(',') || ''
+    const salaryQuery = selectedSalaryRange || ''
+    const search = searchQuery || ''
+
+    // Debugging logs to check parameter values
+    console.log('Employment Type Query:', employmentTypeQuery)
+    console.log('Location Query:', locationQuery)
+    console.log('Salary Query:', salaryQuery)
+    console.log('Search Query:', search)
+
+    // Construct URL with query parameters
+    const url = `https://apis.ccbp.in/jobs?employment_type=${employmentTypeQuery}&location=${locationQuery}&minimum_package=${salaryQuery}&search=${search}`
+
+    console.log('API URL:', url) // Debugging log to check URL
+
     const options = {
       headers: {
         Authorization: `Bearer ${jwtToken}`,
@@ -50,13 +91,27 @@ class JobItems extends Component {
         rating: each.rating,
         title: each.title,
       }))
+      console.log('API Response Data:', data) // Debugging log to check API response
       this.setState({
-        apiStatus: apiStatusConstants.success,
         jobsList: updatedData,
+        apiStatus: apiStatusConstants.success,
       })
     } else {
       this.setState({apiStatus: apiStatusConstants.failure})
     }
+  }
+
+  onClickSearchIcon = () => {
+    this.setState(
+      prevState => ({
+        searchQuery: prevState.searchQuery,
+      }),
+      this.getJobsList,
+    )
+  }
+
+  onChangeSearchInput = event => {
+    this.setState({searchQuery: event.target.value})
   }
 
   renderLoadingView = () => (
@@ -77,19 +132,16 @@ class JobItems extends Component {
         We cannot seem to find the page you are looking for.
       </p>
       <div className="btn">
-        <button className="retry-button" type="button">
+        <button
+          className="retry-button"
+          type="button"
+          onClick={this.getJobsList}
+        >
           Retry
         </button>
       </div>
     </div>
   )
-
-  onClickSearchIcon = () => {
-    this.getJobsList()
-  }
-
-  onChangeSearchInput = event =>
-    this.setState({searchQuery: event.target.value})
 
   renderSearchBar = () => {
     const {searchQuery} = this.state
@@ -102,7 +154,6 @@ class JobItems extends Component {
           value={searchQuery}
           onChange={this.onChangeSearchInput}
         />
-
         <button
           type="button"
           data-testid="searchButton"
@@ -164,35 +215,32 @@ class JobItems extends Component {
         className="failure-image"
       />
       <h1 className="fail-head">No Jobs Found</h1>
-      <p className="fail-para">We could not find any jobs.Try other filters.</p>
+      <p className="fail-para">
+        We could not find any jobs. Try other filters.
+      </p>
     </div>
   )
 
-  renderJobsList = () => {
-    const {jobsList, searchQuery} = this.state
-    const filteredJobs = jobsList.filter(job =>
-      job.title.toLowerCase().includes(searchQuery.toLowerCase()),
-    )
-
-    if (filteredJobs.length === 0) {
-      return <div>{this.renderPageNotFound()}</div>
+  renderJobsListItem = () => {
+    const {jobsList} = this.state
+    if (jobsList.length === 0) {
+      return this.renderPageNotFound()
     }
 
     return (
       <ul className="ul-container">
-        {filteredJobs.map(job => this.renderSuccessView(job))}
+        {jobsList.map(job => this.renderSuccessView(job))}
       </ul>
     )
   }
 
-  renderJobsListItem = () => {
+  renderJobsList = () => {
     const {apiStatus} = this.state
-
     switch (apiStatus) {
       case apiStatusConstants.inProgress:
         return this.renderLoadingView()
       case apiStatusConstants.success:
-        return this.renderJobsList()
+        return this.renderJobsListItem()
       case apiStatusConstants.failure:
         return this.renderFailureView()
       default:
@@ -204,10 +252,10 @@ class JobItems extends Component {
     return (
       <div>
         {this.renderSearchBar()}
-
-        {this.renderJobsListItem()}
+        {this.renderJobsList()}
       </div>
     )
   }
 }
+
 export default JobItems
