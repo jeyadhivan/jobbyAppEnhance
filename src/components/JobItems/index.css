@@ -1,0 +1,131 @@
+.job-list-container {
+  background-color: rgb(46, 45, 45, 0.5);
+  color: white;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  padding: 22px;
+  border-radius: 10px;
+  width: 90%;
+  border-width: 0px;
+}
+.company-logo {
+  width: 43px;
+  height: 48px;
+  align-self: flex-start;
+  margin-right: 20px;
+}
+.title-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  height: 50px;
+  line-height: 0%;
+}
+.star-card {
+  display: flex;
+  align-items: center;
+  line-height: 0%;
+}
+.head-card {
+  display: flex;
+}
+.category-container {
+  display: flex;
+  justify-content: space-between;
+}
+.icon-container {
+  display: flex;
+  align-items: center;
+}
+.icon {
+  margin-right: 5px;
+}
+.job_description {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.star {
+  color: yellow;
+}
+.text {
+  font-size: 12px;
+  text-align: left;
+}
+.failure-view-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-family: Roboto;
+  color: white;
+  width: 80%;
+  height: 60vh;
+  margin-top: 100px;
+}
+.ul-container {
+  list-style-type: none;
+  padding: 0px;
+  margin: 0px;
+}
+.fail-para {
+  font-size: 12px;
+  text-align: center;
+  line-height: 0%;
+}
+.retry-button {
+  padding-left: 20px;
+  padding-right: 20px;
+  background-color: rgb(115, 109, 234);
+  border-radius: 5px;
+  outline: none;
+  cursor: pointer;
+  border-width: 0px;
+  color: white;
+  height: 30px;
+  width: fit-content;
+  margin-top: 5px;
+}
+.btn {
+  text-align: center;
+}
+.fail-head {
+  text-align: center;
+}
+.failure-image {
+  height: 500px;
+  width: 500px;
+  align-self: center;
+}
+.search-bar {
+  border-width: 0px;
+  background-color: transparent;
+  color: white;
+  flex-grow: 1;
+  padding-left: 10px;
+  outline: none;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid grey;
+  width: 60%;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+.search-button {
+  background-color: rgb(42, 42, 42, 0.5);
+  color: gray;
+  outline: none;
+  background-size: cover;
+  border-width: 0px;
+  width: 10%;
+  height: 100%;
+  padding: 0px;
+  margin: 0px;
+}
+.link-items {
+  text-decoration: none;
+}
