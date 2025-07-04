@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import Cookies from "js-cookie";
 import { BsFillBriefcaseFill, BsStarFill } from "react-icons/bs";
@@ -20,7 +20,7 @@ const apiStatusConstants = {
 };
 
 const JobItemDetails = () => {
-  const { id } = useParams(); // ✅ job ID from route param
+  const { id } = useParams();
   const [jobData, setJobData] = useState({});
   const [similarJobsData, setSimilarJobsData] = useState([]);
   const [apiStatus, setApiStatus] = useState(apiStatusConstants.initial);
@@ -55,7 +55,7 @@ const JobItemDetails = () => {
     })),
   });
 
-  const getJobData = async () => {
+  const getJobData = useCallback(async () => {
     setApiStatus(apiStatusConstants.inProgress);
     const jwtToken = Cookies.get("jwt_token");
     const url = `https://apis.ccbp.in/jobs/${id}`;
@@ -77,11 +77,11 @@ const JobItemDetails = () => {
     } else {
       setApiStatus(apiStatusConstants.failure);
     }
-  };
+  }, [id]);
 
   useEffect(() => {
     getJobData();
-  }, [id]);
+  }, [getJobData]);
 
   const renderFailureView = () => (
     <div className="job-item-error-view-container">
